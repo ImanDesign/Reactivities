@@ -1,5 +1,7 @@
 using API.Extensions;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -7,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -21,6 +24,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("CorsPolicy");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 using var scope = app.Services.CreateScope();
@@ -28,8 +34,9 @@ var services = scope.ServiceProvider;
 try
 {
     var dbContext = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await dbContext.Database.MigrateAsync();
-    await Seed.SeedData(dbContext);
+    await Seed.SeedData(dbContext, userManager);
 }
 catch (Exception ex)
 {
