@@ -43,7 +43,10 @@ namespace API.Controllers
         {
             var userExisted = await _userManager.Users.AnyAsync(user => user.UserName == registerDto.Username);
             if (userExisted)
-                return BadRequest($"Username '{registerDto.Username}' is already taken");
+            {
+                ModelState.AddModelError("email", $"Username '{registerDto.Username}' is already taken");
+                return ValidationProblem();
+            }
 
             var user = new AppUser
             {
@@ -53,8 +56,15 @@ namespace API.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
-            
-            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            if (!result.Succeeded)
+            {
+                foreach (var identityError in result.Errors)
+                {
+                    ModelState.AddModelError(identityError.Code, identityError.Description);
+                }
+                return ValidationProblem();
+            }
 
             return Ok(CreateUserDto(user));
         }
