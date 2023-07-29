@@ -1,7 +1,10 @@
-﻿using Application.Activities;
+﻿using System.Text.Json.Serialization;
+using Application.Activities;
 using Application.Core;
+using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +22,9 @@ public static class ApplicationServiceExtensions
             var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 
             opt.Filters.Add(new AuthorizeFilter(policy));
+        }).AddJsonOptions(opt =>
+        {
+            opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
 
         services.AddDbContext<DataContext>(options =>
@@ -40,6 +46,8 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<Create>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<IUserAccessor, UserAccessor>();
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

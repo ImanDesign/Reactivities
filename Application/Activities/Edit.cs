@@ -1,15 +1,17 @@
 ﻿using Application.Core;
+using Application.Dtos;
 using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities;
 
 public class Edit
 {
-    public class Command : IRequest<Result<Activity>>
+    public class Command : IRequest<Result<Unit>>
     {
         public Activity Activity { get; set; }
     }
@@ -22,7 +24,7 @@ public class Edit
         }
     }
 
-    public class Handler : IRequestHandler<Command, Result<Activity>>
+    public class Handler : IRequestHandler<Command, Result<Unit>>
     {
         private readonly DataContext _dataContext;
         private readonly IMapper _mapper;
@@ -33,19 +35,19 @@ public class Edit
             _mapper = mapper;
         }
 
-        public async Task<Result<Activity>> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
             var activityInDb = await _dataContext.Activities.FindAsync(request.Activity.Id);
 
-            if (activityInDb == null) return Result<Activity>.Success(null);
+            if (activityInDb == null) return Result<Unit>.Success(Unit.Value);
 
             _mapper.Map(request.Activity, activityInDb);
 
             var result = await _dataContext.SaveChangesAsync(cancellationToken) > 0;
 
-            if(!result) return Result<Activity>.Failure("Failed to update the activity!");
+            if(!result) return Result<Unit>.Failure("Failed to update the activity!");
 
-            return Result<Activity>.Success(activityInDb);
+            return Result<Unit>.Success(Unit.Value);
 
         }
     }

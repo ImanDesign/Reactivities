@@ -19,6 +19,9 @@
 
   <ItemGroup>
     <Folder Include="Activities\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Dtos\" />
+    <Folder Include="Profiles\" />
   </ItemGroup>
 
 </Project>
