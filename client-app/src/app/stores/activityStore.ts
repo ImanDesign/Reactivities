@@ -79,6 +79,19 @@ export default class ActivityStore {
         )
     }
 
+    updateActivityProfile = (profile: Profile) => {
+        this.activityRegistry.forEach(activity => {
+            if(activity.host && activity.host.username === profile.username)
+                activity.host = profile;
+
+                activity.attendees = activity.attendees.map(attendee => {
+                                            if(attendee.username === profile.username)
+                                                attendee = profile;
+                                            return attendee;
+                                        });
+        })
+    }
+
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
     }

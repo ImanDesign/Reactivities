@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { Photo, Profile } from "../models/profile";
 import agent from "../api/agent";
 import { store } from "./store";
@@ -11,6 +11,13 @@ export class ProfileStore {
     
     constructor() {
         makeAutoObservable(this);
+
+        reaction(
+            () => this.profile,
+            profile => {
+                if(profile)                    
+                    store.activityStore.updateActivityProfile(profile);
+            })
     }
 
     get isCurrentUser() {
@@ -86,6 +93,24 @@ export class ProfileStore {
             runInAction(() => {
                 if(this.profile) {
                     this.profile.photos = this.profile.photos?.filter(p => p.id !== photo.id);
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        } finally {
+            runInAction(() => {this.loading = false});
+        }
+    }
+
+    updateProfile = async (profile: Partial<Profile>) => {
+        this.loading = true;
+
+        try {
+            await agent.Profiles.updateProfile(profile);
+            runInAction(() => {
+                if(this.profile) {
+                    this.profile = {...this.profile, ...profile};
+                    store.userStore.setDisplayName(this.profile.displayName);
                 }
             })
         } catch (error) {
