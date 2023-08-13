@@ -39,6 +39,7 @@ public static class ApplicationServiceExtensions
             {
                 policyBuilder.AllowAnyMethod() // Allow any HTTP method
                     .AllowAnyHeader()
+                    .AllowCredentials()
                     .WithOrigins("http://localhost:3000");
             });
         });
@@ -50,6 +51,7 @@ public static class ApplicationServiceExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IUserAccessor, UserAccessor>();
         services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+        services.AddSignalR();
         services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
         services.AddEndpointsApiExplorer();

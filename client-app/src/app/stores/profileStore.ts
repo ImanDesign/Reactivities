@@ -3,7 +3,7 @@ import { Photo, Profile } from "../models/profile";
 import agent from "../api/agent";
 import { store } from "./store";
 
-export class ProfileStore {
+export default class ProfileStore {
     profile: Profile | null = null;
     loadingProfile = false;
     uploadingPhoto = false;

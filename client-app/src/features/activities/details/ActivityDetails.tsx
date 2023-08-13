@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { Grid } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import ActivityDetailedHeader from "./ActivityDetailedHeader";
@@ -11,7 +11,7 @@ import ActivityDetailedSidebar from "./ActivityDetailedSidebar";
 
 export default observer(function ActivityDetails() {
   const {activityStore} = useStore();
-  const {selectedActivity: activity, loadActivity, loadingInitial} = activityStore;
+  const {selectedActivity: activity, loadActivity, loadingInitial, clearSelectedActivity} = activityStore;
 
   const {id} = useParams();
 
@@ -23,7 +23,8 @@ export default observer(function ActivityDetails() {
   
   useEffect(() => {
     if(id) loadActivity(id);
-  }, [id, loadActivity])
+    return () => clearSelectedActivity();
+  }, [id, loadActivity, clearSelectedActivity])
 
   if(loadingInitial) return <LoadingComponent content="Loading activity..." />
 
@@ -34,7 +35,7 @@ export default observer(function ActivityDetails() {
       <Grid.Column width={10}>
         <ActivityDetailedHeader activity={activity} />
         <ActivityDetailedInfo activity={activity} />
-        <ActivityDetailedChat />
+        <ActivityDetailedChat activityId={activity.id} />
       </Grid.Column>
       <Grid.Column width={6}>
         <ActivityDetailedSidebar activity={activity} />

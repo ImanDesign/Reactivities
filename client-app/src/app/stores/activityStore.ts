@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Activity, ActivityFormValues } from "../models/activity";
 import {v4 as uuid} from 'uuid';
-import { format } from "date-fns";
+import { format, isDate } from "date-fns";
 import { store } from "./store";
 import { Profile } from "../models/profile";
 
@@ -38,10 +38,11 @@ export default class ActivityStore {
             this.setLoadingInitial(true);
             try {
                 activity = await agent.Activities.details(id);
+                this.setActivity(activity);
+                
                 runInAction(() => {
                     this.selectedActivity = activity;
                 });
-                this.setActivity(activity);
             } catch (error) {
                 console.log(error);
             } finally {
@@ -57,8 +58,8 @@ export default class ActivityStore {
             activity.isHost = activity.hostUsername === user.username;
             activity.host = activity.attendees?.find(a => a.username === activity.hostUsername);
         }
-
         activity.date = new Date(activity.date!);
+
         this.activityRegistry.set(activity.id, activity);
     }
 
@@ -200,5 +201,9 @@ export default class ActivityStore {
                 this.loading = false;
             });
         }
+    }
+
+    clearSelectedActivity = () => {
+        this.selectedActivity = undefined;
     }
 }

@@ -5,7 +5,7 @@ export interface Modal {
     body: JSX.Element | null;
 }
 
-export class ModalStore {
+export default class ModalStore {
     modal: Modal = {
         open: false,
         body: null

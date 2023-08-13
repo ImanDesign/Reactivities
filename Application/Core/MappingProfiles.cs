@@ -25,5 +25,12 @@ public class MappingProfiles : Profile
         CreateMap<AppUser, Profiles.Profile>()
             .ForMember(dm => dm.Image,
                 om => om.MapFrom(s => s.Photos.FirstOrDefault(p => p.IsMain).Url));
+        CreateMap<Comment, CommentDto>()
+            .ForMember(dm => dm.DisplayName,
+                om => om.MapFrom(s => s.Author.DisplayName))
+            .ForMember(dm => dm.Username,
+                om => om.MapFrom(s => s.Author.UserName))
+            .ForMember(dm => dm.Image,
+                om => om.MapFrom(s => s.Author.Photos.FirstOrDefault(p => p.IsMain).Url));
     }
 }

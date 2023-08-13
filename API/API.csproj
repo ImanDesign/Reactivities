@@ -28,6 +28,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="Middleware\" />
     <Folder Include="DTOs\" />
+    <Folder Include="SignalR\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
