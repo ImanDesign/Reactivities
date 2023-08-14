@@ -17,7 +17,12 @@ export default observer(function ActivityListItemAttendee({attendees}: Props) {
                     key={attendee.username}
                     trigger={
                         <List.Item key={attendee.username} as={Link} to={`/profile/${attendee.username}`}>
-                            <Image size="mini" circular src={attendee.image || '/assets/user.png'} />
+                            <Image 
+                                style={attendee.following ? {borderColor: 'orange', borderWidth: 2} : null}
+                                size="mini" 
+                                bordered
+                                circular 
+                                src={attendee.image || '/assets/user.png'} />
                         </List.Item>
                     }
                 >

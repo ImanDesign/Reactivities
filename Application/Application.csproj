@@ -21,6 +21,7 @@
     <Folder Include="Activities\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Comments\" />
+    <Folder Include="Followers\" />
     <Folder Include="Photos\" />
     <Folder Include="Profiles\" />
   </ItemGroup>

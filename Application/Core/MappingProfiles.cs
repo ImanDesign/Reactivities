@@ -9,10 +9,14 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        string currentUsername = null;
+
         CreateMap<Activity, Activity>();
+        
         CreateMap<Activity, ActivityDto>()
             .ForMember(dm => dm.HostUsername, 
                 mo => mo.MapFrom(s => s.Attendees.FirstOrDefault(a => a.IsHost).AppUser.UserName));
+        
         CreateMap<ActivityAttendee, AttendeeDto>()
             .ForMember(dm => dm.DisplayName, 
                 om => om.MapFrom(s => s.AppUser.DisplayName))
@@ -21,10 +25,24 @@ public class MappingProfiles : Profile
             .ForMember(dm => dm.Bio,
                 om => om.MapFrom(s => s.AppUser.Bio))
             .ForMember(dm => dm.Image,
-                om => om.MapFrom(s => s.AppUser.Photos.FirstOrDefault(p => p.IsMain).Url));
+                om => om.MapFrom(s => s.AppUser.Photos.FirstOrDefault(p => p.IsMain).Url))
+            .ForMember(dm => dm.FollowersCount,
+                om => om.MapFrom(s => s.AppUser.Followers.Count))
+            .ForMember(dm => dm.FollowingCount,
+                om => om.MapFrom(s => s.AppUser.Followings.Count))
+            .ForMember(dm => dm.Following,
+                om => om.MapFrom(s => s.AppUser.Followers.Any(f => f.Observer.UserName == currentUsername)));
+
         CreateMap<AppUser, Profiles.Profile>()
             .ForMember(dm => dm.Image,
-                om => om.MapFrom(s => s.Photos.FirstOrDefault(p => p.IsMain).Url));
+                om => om.MapFrom(s => s.Photos.FirstOrDefault(p => p.IsMain).Url))
+            .ForMember(dm => dm.FollowersCount,
+                om => om.MapFrom(s => s.Followers.Count))
+            .ForMember(dm => dm.FollowingCount,
+                om => om.MapFrom(s => s.Followings.Count))
+            .ForMember(dm => dm.Following,
+                om => om.MapFrom(s => s.Followers.Any(f => f.Observer.UserName == currentUsername)));
+        
         CreateMap<Comment, CommentDto>()
             .ForMember(dm => dm.DisplayName,
                 om => om.MapFrom(s => s.Author.DisplayName))
