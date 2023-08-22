@@ -3,7 +3,6 @@ import { Grid, Loader } from "semantic-ui-react";
 import { useStore } from "../../../app/stores/store";
 import ActivityList from "./ActivityList";
 import { useEffect, useState } from "react";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
 import ActivityFilters from "./ActivityFilters";
 import { PagingParams } from "../../../app/models/pagination";
 import InfiniteScroll from "react-infinite-scroller";
@@ -11,12 +10,12 @@ import ActivityListItemPlaceholder from "./ActivityListItemPlaceholder";
 
 export default observer(function ActivityDashboard() {
   const {activityStore} = useStore();
-  const {loadActivities, activityRegistry, loadingInitial, pagination, setPagingParams} = activityStore;
+  const {loadActivities, activityRegistry, pagination, setPagingParams} = activityStore;
   const [loadingNext, setLoadingNext] = useState(false);
 
   function handleGetNext() {
     setLoadingNext(true);
-    setPagingParams(new PagingParams(pagination!.currentPage + 1, 2));
+    setPagingParams(new PagingParams(pagination!.currentPage + 1, 3));
     loadActivities().then(() => setLoadingNext(false));
   }
 
